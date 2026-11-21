@@ -1,26 +1,119 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: 0 0% 100%;
+  --foreground: 0 0% 9%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 9%;
+
+  --primary: 82 84% 38%;          /* Vert citron principal (contraste fort) */
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 0 0% 96%;
+  --secondary-foreground: 0 0% 12%;
+
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 45%;
+
+  --accent: 80 72% 88%;           /* Citron pastel doux (survol / mise en avant légère) */
+  --accent-foreground: 82 80% 18%; /* Vert citron très sombre pour bonne lisibilité */
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --ring: 82 84% 38%;
+
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: 0 0% 4%;         /* Noir profond (~#0a0a0a) */
+  --foreground: 0 0% 98%;       /* Blanc cassé net (~#fafafa) */
+
+  --card: 0 0% 7%;              /* Noir charbon léger (~#121212) */
+  --card-foreground: 0 0% 98%;
+
+  --primary: 84 85% 55%;        /* Vert citron vif (action principale) */
+  --primary-foreground: 0 0% 6%;
+
+  --secondary: 0 0% 13%;        /* Gris anthracite sombre (~#212121) */
+  --secondary-foreground: 0 0% 96%;
+
+  --muted: 0 0% 12%;            /* Surface secondaire discrète (~#1f1f1f) */
+  --muted-foreground: 0 0% 64%;
+
+  --accent: 82 45% 16%;         /* Vert citron foncé / olive sombre (survol discret) */
+  --accent-foreground: 84 85% 68%; /* Citron clair lisible sur fond sombre */
+
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 0 0% 18%;           /* Bordure noire/grise subtile (~#2e2e2e) */
+  --input: 0 0% 18%;
+  --ring: 84 85% 55%;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-sans: var(--font-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@utility container {
+  margin-inline: auto;
+  padding-inline: 1rem;
+
+  @media (min-width: 640px) {
+    padding-inline: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    padding-inline: 2rem;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }

@@ -1,0 +1,348 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPER_ADMIN
+  FINANCE
+}
+
+enum Status {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  phone         String?   @unique
+  emailVerified DateTime?
+  phoneVerified DateTime?
+  image         String?
+  passwordHash  String?
+  role          Role      @default(USER)
+  isActive      Boolean   @default(true)
+
+  accounts Account[]
+  sessions Session[]
+  articles Article[]
+  createdContributions Contribution[] @relation("ContributionAuthor")
+  createdExpenses      Expense[]      @relation("ExpenseAuthor")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @id
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  slug     String    @unique
+  articles Article[]
+}
+
+model Article {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String?
+  content     String    @db.Text
+  coverImage  String?
+  status      Status    @default(DRAFT)
+  publishedAt DateTime?
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, publishedAt])
+}
+
+enum CommitteeStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum CommitteeMemberRole {
+  DELEGUE
+  DIR_CAB
+  VICE_DELEGUE
+  SECRETAIRE_GENERAL
+  TRESORIER
+  MINISTRE
+  VICE_MINISTRE
+}
+
+enum MinistryKind {
+  PLAN_FINANCE
+  AFFAIRES_SOCIALES
+  COMMUNICATION
+  CULTURE_ART
+  SPORT_LOISIR
+  DEFENSE
+  LITURGIE
+  AFFAIRES_SCIENTIFIQUES
+  LOGISTIQUE
+  AUTRE
+}
+
+model Committee {
+  id         String          @id @default(cuid())
+  name       String
+  year       String          @unique
+  status     CommitteeStatus @default(ACTIVE)
+  archivedAt DateTime?
+
+  members    CommitteeMember[]
+  ministries Ministry[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Ministry {
+  id          String       @id @default(cuid())
+  committeeId String
+  committee   Committee    @relation(fields: [committeeId], references: [id], onDelete: Cascade)
+  name        String
+  kind        MinistryKind @default(AUTRE)
+  displayOrder Int         @default(0)
+
+  members CommitteeMember[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([committeeId, name])
+}
+
+model CommitteeMember {
+  id          String              @id @default(cuid())
+  committeeId String
+  committee   Committee           @relation(fields: [committeeId], references: [id], onDelete: Cascade)
+  ministryId  String?
+  ministry    Ministry?           @relation(fields: [ministryId], references: [id], onDelete: SetNull)
+
+  fullName    String
+  role        CommitteeMemberRole
+  roleLabel   String?
+  photoUrl    String?
+  email       String?
+  phone       String?
+  whatsapp    String?
+  bio         String?             @db.Text
+  displayOrder Int                @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([committeeId, role])
+}
+
+model SitePage {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  title     String
+  content   String   @db.Text
+  updatedAt DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+enum ContributionFrequency {
+  WEEKLY
+  MONTHLY
+  ANNUAL
+}
+
+enum ContributionStatus {
+  PENDING
+  PARTIAL
+  PAID
+}
+
+model Promotion {
+  id           String   @id @default(cuid())
+  name         String
+  academicYear String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  departments   Department[]
+  students      Student[]
+  contributions Contribution[]
+}
+
+model Department {
+  id          String    @id @default(cuid())
+  name        String
+  promotionId String
+  promotion   Promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+
+  students      Student[]
+  contributions Contribution[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([promotionId, name])
+}
+
+model Student {
+  id           String     @id @default(cuid())
+  lastName     String
+  middleName   String?
+  firstName    String
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  promotionId  String
+  promotion    Promotion  @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+
+  contributions StudentContribution[]
+
+  @@index([departmentId])
+  @@index([promotionId])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+enum MonthStatus {
+  OPEN
+  CLOSED
+}
+
+model Month {
+  id        String      @id @default(cuid())
+  year      Int
+  month     Int
+  label     String
+  status    MonthStatus @default(OPEN)
+  closedAt  DateTime?
+
+  contributions Contribution[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([year, month])
+}
+
+model Contribution {
+  id           String                @id @default(cuid())
+  label        String
+  amount       Decimal               @db.Decimal(12, 2)
+  frequency    ContributionFrequency @default(MONTHLY)
+
+  monthId      String
+  month        Month                 @relation(fields: [monthId], references: [id], onDelete: Cascade)
+
+  promotionId  String?
+  promotion    Promotion?            @relation(fields: [promotionId], references: [id], onDelete: SetNull)
+  departmentId String?
+  department   Department?           @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+
+  attributions StudentContribution[]
+  @@index([monthId])
+  @@index([monthId, createdAt])
+
+  createdById String?
+  createdBy   User?   @relation("ContributionAuthor", fields: [createdById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StudentContribution {
+  id             String             @id @default(cuid())
+  contributionId String
+  contribution   Contribution       @relation(fields: [contributionId], references: [id], onDelete: Cascade)
+  studentId      String
+  student        Student            @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  baseAmount     Decimal            @db.Decimal(12, 2)              // montant de cette cotisation
+  carriedDebt    Decimal            @default(0) @db.Decimal(12, 2)  // dette reportée
+  amount         Decimal            @db.Decimal(12, 2)              // = baseAmount + carriedDebt
+  paidAmount     Decimal            @default(0) @db.Decimal(12, 2)
+  status         ContributionStatus @default(PENDING)
+  paidAt         DateTime?
+  rolledOverAt   DateTime?                                          // non-null = déjà reportée dans un mois ultérieur
+
+  @@index([studentId, rolledOverAt])
+  @@index([status])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([contributionId, studentId])
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  label       String
+  amount      Decimal  @db.Decimal(12, 2)
+  date        DateTime @default(now())
+  description String?  @db.Text
+
+  createdById String?
+  createdBy   User?    @relation("ExpenseAuthor", fields: [createdById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([date])
+}
