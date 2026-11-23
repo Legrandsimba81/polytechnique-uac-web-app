@@ -19,6 +19,21 @@ async function main() {
     },
   });
 
+  const password = await bcrypt.hash("Kase1234", 12);
+    await prisma.user.upsert({
+        where: { email: "simba@gmail.com" },
+        update: {},
+        create: {
+            name : "Legrand Simba",
+            email: "simba@gmail.com",
+            phone: "+243827733286",
+            passwordHash: password,
+            role: Role.USER,
+            emailVerified: new Date(),
+        },
+    });
+    console.log("✅ User simba prêt");
+
   if (process.env.FINANCE_USER_EMAIL && process.env.FINANCE_USER_PASSWORD) {
   const financeHash = await bcrypt.hash(process.env.FINANCE_USER_PASSWORD, 12);
   await prisma.user.upsert({

@@ -10,6 +10,7 @@ import {
   Users,
   Mail,
   Wallet,
+  Lightbulb,
   LogOut,
   ShieldCheck,
   UserRound,
@@ -20,6 +21,7 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/", label: "Accueil", icon: Home },
+  { href: "/innovation", label: "Innovation", icon: Lightbulb },
   { href: "/finance", label: "Finance", icon: Wallet },
   { href: "/articles", label: "Articles", icon: Newspaper },
   { href: "/comite", label: "Comité", icon: Users },
@@ -154,6 +156,13 @@ export function NavBar() {
                       >
                         <ShieldCheck size={16} className="text-primary" />
                         Administration
+                      </Link>
+                    )}
+                    {role === "STUDENT" && (
+                      <Link 
+                      href="/mon-espace/projets" onClick={() => setUserMenuOpen(false)} 
+                      className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition hover:bg-accent">
+                        <Lightbulb size={16} className="text-primary" /> Mes projets
                       </Link>
                     )}
                     <Link

@@ -7,7 +7,7 @@ import {
   LayoutDashboard,
   FileText,
   Users,
-  MessageSquare,
+  Lightbulb,
   Wallet,
   TrendingDown,
   Calendar,
@@ -65,11 +65,10 @@ const navEntries: NavEntry[] = [
     icon: Users,
     roles: ["ADMIN", "SUPER_ADMIN"],
   },
-  {
-    href: "/admin/messages",
-    label: "Messages",
-    icon: MessageSquare,
-    roles: ["ADMIN", "SUPER_ADMIN"],
+  { href: "/admin/innovation", 
+    label: "Innovation", 
+    icon: Lightbulb, 
+    roles: ["ADMIN", "SUPER_ADMIN"] 
   },
   {
     label: "Finance",

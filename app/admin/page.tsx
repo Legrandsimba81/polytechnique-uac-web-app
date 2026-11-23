@@ -13,7 +13,7 @@ export default async function AdminDashboard() {
   const stats = [
     { label: "Articles", value: articles, icon: FileText },
     { label: "Membres du comité", value: members, icon: Users },
-    { label: "Messages non lus", value: messages, icon: MessageSquare },
+    
     { label: "Utilisateurs", value: users, icon: UserCheck },
   ];
 
