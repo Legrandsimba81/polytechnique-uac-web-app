@@ -170,7 +170,7 @@ export function RegisterForm() {
 
   function handleGoogleSignIn() {
     setGooglePending(true);
-    signIn("google", { callbackUrl: "/profil" });
+    signIn("google", { callbackUrl: "/innovation" });
   }
 
   if (state.verificationEmail) {
