@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
@@ -35,7 +36,7 @@ export function NavBar() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
-  // Fermer le menu user au changement de route
+  // Fermer le menu utilisateur au changement de route
   useEffect(() => {
     setUserMenuOpen(false);
   }, [pathname]);
@@ -79,9 +80,21 @@ export function NavBar() {
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
       <div className="container flex h-16 items-center justify-between gap-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 font-semibold">
-          <span className="inline-block h-8 w-8 rounded-lg bg-primary" />
-          <span className="hidden sm:inline">Comité des Étudiants</span>
+        <Link
+          href="/"
+          className="flex items-center gap-2.5 font-semibold tracking-tight"
+        >
+          <Image
+            src="/logo.JPG"
+            alt="Logo Polytechnique"
+            width={32}
+            height={32}
+            className="h-8 w-8 rounded-md object-contain"
+            priority
+          />
+          <span className="hidden sm:inline text-base font-bold">
+            Poly<span className="text-primary">technique</span>
+          </span>
         </Link>
 
         {/* Navigation desktop */}
@@ -119,7 +132,7 @@ export function NavBar() {
                 className="flex items-center gap-2 rounded-full border bg-background px-2 py-1.5 text-sm font-medium transition hover:border-primary hover:text-primary"
                 title={userName}
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-xs text-primary">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-xs font-semibold text-primary">
                   {session.user?.image ? (
                     <img
                       src={session.user.image}
@@ -134,10 +147,10 @@ export function NavBar() {
               </button>
 
               {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-64 rounded-2xl border bg-white dark:bg-muted p-2 shadow-xl z-[100]">
+                <div className="absolute right-0 mt-2 w-64 rounded-2xl border bg-card p-2 shadow-xl z-[100]">
                   <div className="rounded-xl border bg-muted p-3">
-                    <p className="text-sm font-semibold">{userName}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">
+                    <p className="text-sm font-semibold truncate">{userName}</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground truncate">
                       {userEmail}
                     </p>
                   </div>
@@ -158,21 +171,37 @@ export function NavBar() {
                         Administration
                       </Link>
                     )}
+
                     {role === "STUDENT" && (
-                      <Link 
-                      href="/mon-espace/projets" onClick={() => setUserMenuOpen(false)} 
-                      className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition hover:bg-accent">
-                        <Lightbulb size={16} className="text-primary" /> Mes projets
+                      <Link
+                        href="/mon-espace/projets"
+                        onClick={() => setUserMenuOpen(false)}
+                        className={cn(
+                          "flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition",
+                          isActive("/mon-espace/projets")
+                            ? "bg-primary/10 font-medium text-primary"
+                            : "hover:bg-accent"
+                        )}
+                      >
+                        <Lightbulb size={16} className="text-primary" />
+                        Mes projets
                       </Link>
                     )}
+
                     <Link
-                      href="/admin"
+                      href="/profil"
                       onClick={() => setUserMenuOpen(false)}
-                      className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition hover:bg-accent"
+                      className={cn(
+                        "flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition",
+                        isActive("/profil")
+                          ? "bg-primary/10 font-medium text-primary"
+                          : "hover:bg-accent"
+                      )}
                     >
                       <UserRound size={16} className="text-primary" />
-                      Mon espace
+                      Mon profil
                     </Link>
+
                     <button
                       type="button"
                       onClick={handleSignOut}
@@ -193,7 +222,7 @@ export function NavBar() {
         </div>
       </div>
 
-      {/* Barre mobile : uniquement les icônes, pas de hamburger */}
+      {/* Barre mobile : uniquement les icônes */}
       <div className="border-t bg-background/90 lg:hidden">
         <nav className="container flex items-center justify-around gap-1 py-2">
           {navLinks.map((link) => {
