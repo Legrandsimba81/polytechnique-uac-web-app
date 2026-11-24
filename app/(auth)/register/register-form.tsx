@@ -170,7 +170,7 @@ export function RegisterForm() {
 
   function handleGoogleSignIn() {
     setGooglePending(true);
-    signIn("google", { callbackUrl: "/mon-espace" });
+    signIn("google", { callbackUrl: "/profil" });
   }
 
   if (state.verificationEmail) {

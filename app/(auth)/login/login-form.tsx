@@ -34,7 +34,7 @@ function GoogleLogo() {
 export function LoginForm() {
   const router = useRouter();
   const search = useSearchParams();
-  const callbackUrl = search.get("callbackUrl") ?? "/mon-espace";
+  const callbackUrl = search.get("callbackUrl") ?? "/profil";
 
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");

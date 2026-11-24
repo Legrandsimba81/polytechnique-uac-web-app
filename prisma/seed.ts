@@ -38,6 +38,21 @@ async function main() {
   });
   console.log("✅ User simba prêt");
 
+  const passwordAdmin = await bcrypt.hash("Admin1234!", 12);
+  await prisma.user.upsert({
+    where: { email: "admin@gmail.com" },
+    update: {},
+    create: {
+      name: "Legrand Simba",
+      email: "admin@gmail.com",
+      phone: "+243000000450",
+      passwordHash: passwordAdmin,
+      role: Role.ADMIN,
+      emailVerified: new Date(),
+    },
+  });
+  console.log("✅ User admin prêt");
+
   if (process.env.FINANCE_USER_EMAIL && process.env.FINANCE_USER_PASSWORD) {
     const financeHash = await bcrypt.hash(process.env.FINANCE_USER_PASSWORD, 12);
     await prisma.user.upsert({
