@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 
 export const metadata = { title: "Innovation" };
+export const dynamic = "force-dynamic";
 
 export default async function InnovationPage({
   searchParams,

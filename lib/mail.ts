@@ -37,12 +37,12 @@ export async function sendWelcomeEmail(to: string, name?: string | null) {
   await transporter.sendMail({
     from: process.env.MAIL_FROM ?? process.env.SMTP_USER,
     to,
-    subject: "Bienvenue au Comité des Étudiants — Polytechnique",
+    subject: "Bienvenue dans la planteforme de Polytechnique/uac",
     html: `
       <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
         <h2>Bienvenue, ${displayName} !</h2>
         <p>Votre adresse e-mail est vérifiée et votre compte est maintenant actif.</p>
-        <p>Vous pouvez dès à présent accéder à la plateforme et explorer les projets et actualités.</p>
+        <p>Vous pouvez dès à présent accéder à la plateforme et explorer ou publier les projets et actualités.</p>
       </div>
     `,
   });

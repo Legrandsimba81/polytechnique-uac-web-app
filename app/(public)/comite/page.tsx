@@ -5,6 +5,7 @@ import { ROLE_LABEL, memberSortKey } from "@/lib/committee";
 import { Mail, Phone, MessageCircle } from "lucide-react";
 
 export const metadata = { title: "Le Comité" };
+export const dynamic = "force-dynamic";
 
 export default async function ComitePage() {
   const active = await prisma.committee.findFirst({

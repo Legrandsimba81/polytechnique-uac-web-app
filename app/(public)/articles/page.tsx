@@ -3,7 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import { Heart, MessageSquare } from "lucide-react";
 
+
 export const metadata = { title: "Articles" };
+export const dynamic = "force-dynamic";
 
 export default async function ArticlesPage() {
   const articles = await prisma.article.findMany({

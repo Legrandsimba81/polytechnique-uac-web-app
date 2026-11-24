@@ -4,8 +4,12 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-  const passwordHash = await bcrypt.hash(process.env.SUPER_ADMIN_PASSWORD!, 12);
 
+
+  const passwordHash = await bcrypt.hash(process.env.SUPER_ADMIN_PASSWORD!, 12);
+  if (!process.env.SUPER_ADMIN_EMAIL || !process.env.SUPER_ADMIN_PASSWORD) {
+    throw new Error("SUPER_ADMIN_EMAIL et SUPER_ADMIN_PASSWORD doivent être définis dans .env");
+  }
   await prisma.user.upsert({
     where: { email: process.env.SUPER_ADMIN_EMAIL! },
     update: {},
@@ -20,36 +24,36 @@ async function main() {
   });
 
   const password = await bcrypt.hash("Kase1234", 12);
-    await prisma.user.upsert({
-        where: { email: "simba@gmail.com" },
-        update: {},
-        create: {
-            name : "Legrand Simba",
-            email: "simba@gmail.com",
-            phone: "+243827733286",
-            passwordHash: password,
-            role: Role.USER,
-            emailVerified: new Date(),
-        },
-    });
-    console.log("✅ User simba prêt");
-
-  if (process.env.FINANCE_USER_EMAIL && process.env.FINANCE_USER_PASSWORD) {
-  const financeHash = await bcrypt.hash(process.env.FINANCE_USER_PASSWORD, 12);
   await prisma.user.upsert({
-    where: { email: process.env.FINANCE_USER_EMAIL },
+    where: { email: "simba@gmail.com" },
     update: {},
     create: {
-      name: process.env.FINANCE_USER_NAME ?? "Finance",
-      email: process.env.FINANCE_USER_EMAIL,
-      phone: process.env.FINANCE_USER_PHONE,
-      passwordHash: financeHash,
-      role: "FINANCE",
+      name: "Legrand Simba",
+      email: "simba@gmail.com",
+      phone: "+243827733286",
+      passwordHash: password,
+      role: Role.USER,
       emailVerified: new Date(),
     },
   });
-  console.log("✅ Finance user prêt");
-}
+  console.log("✅ User simba prêt");
+
+  if (process.env.FINANCE_USER_EMAIL && process.env.FINANCE_USER_PASSWORD) {
+    const financeHash = await bcrypt.hash(process.env.FINANCE_USER_PASSWORD, 12);
+    await prisma.user.upsert({
+      where: { email: process.env.FINANCE_USER_EMAIL },
+      update: {},
+      create: {
+        name: process.env.FINANCE_USER_NAME ?? "Finance",
+        email: process.env.FINANCE_USER_EMAIL,
+        phone: process.env.FINANCE_USER_PHONE,
+        passwordHash: financeHash,
+        role: "FINANCE",
+        emailVerified: new Date(),
+      },
+    });
+    console.log("✅ Finance user prêt");
+  }
   console.log("✅ Super admin prêt");
 }
 
