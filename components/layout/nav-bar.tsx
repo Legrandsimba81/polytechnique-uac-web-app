@@ -29,6 +29,8 @@ const navLinks = [
   { href: "/contact", label: "Contact", icon: Mail },
 ];
 
+const mobileNavLinks = navLinks.filter((link) => link.href !== "/");
+
 export function NavBar() {
   const { data: session } = useSession();
   const pathname = usePathname();
@@ -222,10 +224,10 @@ export function NavBar() {
         </div>
       </div>
 
-      {/* Barre mobile : uniquement les icônes */}
+      {/* Barre mobile : uniquement les icônes (sans Accueil) */}
       <div className="border-t bg-background/90 lg:hidden">
         <nav className="container flex items-center justify-around gap-1 py-2">
-          {navLinks.map((link) => {
+          {mobileNavLinks.map((link) => {
             const Icon = link.icon;
             const active = isActive(link.href);
             return (
